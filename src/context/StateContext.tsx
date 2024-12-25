@@ -5,6 +5,7 @@ import React, { createContext, useContext, useReducer } from 'react';
 interface State {
   balance: number;
   transactionHistory: Array<{ id: string; recipient: string; amount: number; date: string }>;
+  isBiometricEnabled: boolean;
 }
 
 interface Action {
@@ -15,6 +16,7 @@ interface Action {
 const initialState: State = {
   balance: 1000,
   transactionHistory: [],
+  isBiometricEnabled: true,
 };
 
 const StateContext = createContext<{
@@ -35,6 +37,11 @@ const reducer = (state: State, action: Action): State => {
           ...state.transactionHistory,
           { id: Date.now().toString(), ...action.payload },
         ],
+      };
+    case 'DISABLE_BIOMETRIC':
+      return {
+        ...state,
+        isBiometricEnabled: false,
       };
     default:
       return state;

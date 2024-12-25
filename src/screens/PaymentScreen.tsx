@@ -13,12 +13,12 @@ const PaymentScreen = ({ navigation }: any) => {
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
 
-  const showToast = (type: 'success' | 'error', message: string) => {
+  const showToast = useCallback((type: 'success' | 'error', message: string) => {
     Toast.show({
       type,
       text1: message,
     });
-  };
+  }, []);
 
   const handleTransfer = useCallback(async () => {
     const numericAmount = parseFloat(amount);
@@ -47,9 +47,11 @@ const PaymentScreen = ({ navigation }: any) => {
         showToast('error', 'Transaction failed. Please try again.');
       }
     } else {
-      showToast('error', 'Biometric authentication failed.');
+      dispatch({ type: 'DISABLE_BIOMETRIC' });
+      showToast('error', 'Biometric authentication failed. Redirecting...');
+      navigation.navigate('VerifyOptions');
     }
-  }, [amount, recipient, state.balance, dispatch, showToast]);
+  }, [amount, recipient, state.balance, dispatch, showToast, navigation]);
 
   return (
     <View style={styles.container}>
@@ -68,6 +70,7 @@ const PaymentScreen = ({ navigation }: any) => {
         onChangeText={setAmount}
       />
       <Button title="Transfer" onPress={handleTransfer} />
+      <br />
       <Button title="View History" onPress={() => navigation.navigate('History')} />
       <Toast />
     </View>
