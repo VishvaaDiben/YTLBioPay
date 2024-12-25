@@ -11,13 +11,13 @@ Access recipient contacts.<br />
 View recent transaction history.
 
 ## Setup Instructions
-1. Clone the Repository<br />
+1. Clone the Repository:<br />
 git clone https://github.com/your-username/PaymentApp.git<br />
 cd PaymentApp<br />
 checkout master branch<br />
-2. Install Dependencies<br />
+2. Install Dependencies:<br />
 npm install<br />
-3. Start the App<br />
+3. Start the App:<br />
 npm start
 
 ## Usage
