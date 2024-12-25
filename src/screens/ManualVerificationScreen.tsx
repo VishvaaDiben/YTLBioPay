@@ -1,26 +1,40 @@
 // ManualVerificationScreen.tsx
 
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { useState } from 'react';
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useState } from "react";
 
-import { Picker } from '@react-native-picker/picker';
-import { processTransaction } from '../utils/api';
-import { useStateContext } from '../context/StateContext';
+import { Picker } from "@react-native-picker/picker";
+import Toast from "react-native-toast-message";
+import { processTransaction } from "../utils/api";
+import { useStateContext } from "../context/StateContext";
 
-const ManualVerificationScreen = ({ navigation }: any) => {
+const ManualVerificationScreen = ({ navigation, route }: any) => {
+  const { recipient, amount } = route.params;
   const { dispatch } = useStateContext();
-  const [verificationType, setVerificationType] = useState('passport');
-  const [idNumber, setIdNumber] = useState('');
+  const [verificationType, setVerificationType] = useState("passport");
+  const [idNumber, setIdNumber] = useState("");
 
   const handleNext = async () => {
+    Toast.show({ type: "info", text1: "Processing transaction..." });
     if (idNumber.trim()) {
-      const success = await processTransaction('ManualVerify', 0); // Placeholder for API call
+      const success = await processTransaction("ManualVerify", 0); // Placeholder for API call
       if (success) {
-        dispatch({ type: 'TRANSFER', payload: { recipient: 'ManualVerify', amount: 0, date: new Date().toISOString() } });
+        dispatch({
+          type: "TRANSFER",
+          payload: {
+            recipient: recipient,
+            amount: amount,
+            date: new Date().toISOString(),
+          },
+        });
       }
-      navigation.navigate('Home');
+      navigation.navigate("Home");
     } else {
-      alert('Please fill in the ID number');
+      Toast.show({
+        type: "error",
+        text1: "An error occurred while processing the transaction.",
+      });
+      alert("Please fill in the ID number");
     }
   };
 
@@ -51,7 +65,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   label: {
     fontSize: 16,

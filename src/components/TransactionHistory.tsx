@@ -21,7 +21,7 @@ const TransactionHistory = () => {
     return (
       <View style={styles.item}>
         <Text>{item.recipient}</Text>
-        <Text>${item.amount.toFixed(2)}</Text>
+        <Text>${item.amount}</Text>
         <Text>{new Date(item.date).toLocaleString()}</Text>
       </View>
     );

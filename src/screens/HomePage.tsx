@@ -51,7 +51,7 @@ const HomePage = ({ navigation }: any) => {
       </View>
       <Text style={styles.header}>Recent Transactions:</Text>
       <FlatList
-        data={state.transactionHistory}
+        data={state.transactionHistory.slice(0, 2)}
         renderItem={renderTransaction}
         keyExtractor={(item) => item.id}
         style={styles.history}

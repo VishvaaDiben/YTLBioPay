@@ -35,7 +35,7 @@ const reducer = (state: State, action: Action): State => {
         balance: state.balance - action.payload.amount,
         transactionHistory: [
           { id: Date.now().toString(), ...action.payload },
-          ...state.transactionHistory.slice(0, 1),
+          ...state.transactionHistory,
         ],
       };
     case 'DISABLE_BIOMETRIC':

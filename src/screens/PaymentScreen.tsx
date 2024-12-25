@@ -99,7 +99,7 @@ const PaymentScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Balance: ${state.balance.toFixed(2)}</Text>
+      <Text style={styles.label}>Balance: ${state.balance}</Text>
       <TextInput
         style={styles.input}
         placeholder="Recipient"
@@ -149,7 +149,7 @@ const PaymentScreen = ({ navigation }: any) => {
           label="Manual"
           onPress={() => {
             setDialogVisible(false);
-            navigation.navigate("ManualVerify");
+            navigation.navigate("ManualVerify", { recipient: recipient, amount: amount });
           }}
         />
       </Dialog.Container>
