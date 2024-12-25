@@ -1,15 +1,24 @@
+// ManualVerificationScreen.tsx
+
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import React, { useState } from 'react';
 
 import { Picker } from '@react-native-picker/picker';
+import { processTransaction } from '../utils/api';
+import { useStateContext } from '../context/StateContext';
 
 const ManualVerificationScreen = ({ navigation }: any) => {
+  const { dispatch } = useStateContext();
   const [verificationType, setVerificationType] = useState('passport');
   const [idNumber, setIdNumber] = useState('');
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (idNumber.trim()) {
-      navigation.navigate('Payment');
+      const success = await processTransaction('ManualVerify', 0); // Placeholder for API call
+      if (success) {
+        dispatch({ type: 'TRANSFER', payload: { recipient: 'ManualVerify', amount: 0, date: new Date().toISOString() } });
+      }
+      navigation.navigate('Home');
     } else {
       alert('Please fill in the ID number');
     }

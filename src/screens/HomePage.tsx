@@ -1,41 +1,91 @@
 // HomePage.tsx
 
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import React, { useCallback } from "react";
 
-import React from 'react';
+import Toast from "react-native-toast-message";
+import { useStateContext } from "../context/StateContext";
 
 const HomePage = ({ navigation }: any) => {
-  const accountHolderName = 'YTLCustomer';
-  const accountDetails = {
-    cifNumber: 1111,
-    accountNumber: 11223546422,
-  };
+  const { state } = useStateContext();
+
+  const showToast = useCallback(
+    (type: "success" | "error", message: string) => {
+      Toast.show({
+        type,
+        text1: message,
+      });
+    },
+    []
+  );
+
+  const renderTransaction = ({ item }: any) => (
+    <Text
+      style={styles.transactionItem}
+      onPress={() => {
+        navigation.navigate("Payment", { recipient: item.recipient });
+        showToast("success", "click the below log to auto fill name.");
+        alert("click the below log to auto fill name.");
+      }}
+    >
+      {item.recipient} - ${item.amount}
+    </Text>
+  );
 
   return (
     <View style={styles.container}>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.text}>Account Holder: {accountHolderName}</Text>
-        <Text style={styles.text}>CIF Number: {accountDetails.cifNumber}</Text>
-        <Text style={styles.text}>Account Number: {accountDetails.accountNumber}</Text>
+      <View style={styles.accountDetails}>
+        <Text>Account Holder: YTLCustomer</Text>
+        <Text>CIF Number: 1111</Text>
+        <Text>Account Number: 11223546422</Text>
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="View History" onPress={() => navigation.navigate('History')} />
-        <Button title="Make Payment" onPress={() => navigation.navigate('Payment')} />
+        <Button
+          title="View History"
+          onPress={() => navigation.navigate("History")}
+        />
+        <Button
+          title="Make a Payment"
+          onPress={() => navigation.navigate("Payment")}
+        />
       </View>
+      <Text style={styles.header}>Recent Transactions:</Text>
+      <FlatList
+        data={state.transactionHistory}
+        renderItem={renderTransaction}
+        keyExtractor={(item) => item.id}
+        style={styles.history}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, justifyContent: 'center' },
-    detailsContainer: { marginBottom: 30 },
-    text: { fontSize: 18, marginBottom: 10 },
-    buttonContainer: {
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      flexDirection: 'column',
-      gap: 15,
-    },
-  });
-  
-  export default HomePage;
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  accountDetails: {
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    marginBottom: 20,
+    gap: 10,
+  },
+  header: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  transactionItem: {
+    padding: 10,
+    backgroundColor: "#eee",
+    marginBottom: 5,
+    borderRadius: 5,
+  },
+  history: {
+    marginTop: 20,
+  },
+});
+
+export default HomePage;
