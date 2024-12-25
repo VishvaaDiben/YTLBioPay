@@ -1,48 +1,55 @@
 // PaymentScreen.tsx
 
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
+import Toast from 'react-native-toast-message';
+import { authenticateBiometric } from '../utils/auth';
+import { processTransaction } from '../utils/api';
 import { useStateContext } from '../context/StateContext';
 
-// import { authenticateBiometric } from '../utils/auth';
-// import { processTransaction } from '../utils/api';
-
-const PaymentScreen = () => {
+const PaymentScreen = ({ navigation }: any) => {
   const { state, dispatch } = useStateContext();
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
 
-  const handleTransfer = async () => {
+  const showToast = (type: 'success' | 'error', message: string) => {
+    Toast.show({
+      type,
+      text1: message,
+    });
+  };
+
+  const handleTransfer = useCallback(async () => {
     const numericAmount = parseFloat(amount);
 
     if (!recipient || isNaN(numericAmount)) {
-      alert('Invalid recipient or amount.');
+      showToast('error', 'Invalid recipient or amount.');
       return;
     }
 
     if (numericAmount > state.balance) {
-      alert('Insufficient funds.');
+      showToast('error', 'Insufficient funds.');
       return;
     }
 
-    // const isAuthenticated = await authenticateBiometric();
+    const isAuthenticated = await authenticateBiometric();
 
-    // if (isAuthenticated) {
-    //   const success = await processTransaction(recipient, numericAmount);
-    //   if (success) {
-    //     dispatch({
-    //       type: 'TRANSFER',
-    //       payload: { recipient, amount: numericAmount, date: new Date().toISOString() },
-    //     });
-    //     alert(`Transfer to ${recipient} of $${numericAmount} successful!`);
-    //   } else {
-    //     alert('Transaction failed. Please try again.');
-    //   }
-    // } else {
-    //   alert('Biometric authentication failed.');
-    // }
-  };
+    if (isAuthenticated) {
+      const success = await processTransaction(recipient, numericAmount);
+      if (success) {
+        dispatch({
+          type: 'TRANSFER',
+          payload: { recipient, amount: numericAmount, date: new Date().toISOString() },
+        });
+        showToast('success', `Transfer to ${recipient} of $${numericAmount} successful!`);
+      } else {
+        showToast('error', 'Transaction failed. Please try again.');
+      }
+    } else {
+      showToast('error', 'Biometric authentication failed.');
+    }
+  }, [amount, recipient, state.balance, dispatch, showToast]);
 
   return (
     <View style={styles.container}>
@@ -61,6 +68,8 @@ const PaymentScreen = () => {
         onChangeText={setAmount}
       />
       <Button title="Transfer" onPress={handleTransfer} />
+      <Button title="View History" onPress={() => navigation.navigate('History')} />
+      <Toast />
     </View>
   );
 };
