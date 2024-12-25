@@ -36,7 +36,7 @@ Local Authentication: expo-local-authentication<br />
 State Management: Context Api <br />
 
 ## Demo
-[gdrive link]
+https://photos.app.goo.gl/6cdYm1mP3fvRBn3V7 
 
 ## Design Decisions<br />
 Component Reusability: Separate components for PaymentForm and TransactionHistory.<br />
